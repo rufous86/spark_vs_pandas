@@ -48,12 +48,12 @@ df = spark.read.csv('data/train.csv', header=True, inferSchema=True)
 
 df.printSchema()
 ```
-
+Для того, чтобы глянуть на данные, в pyspark есть метод show
 ```python
 df.show()
 ```
 
-
+```python
 from pyspark.sql.types import IntegerType
 
 df = df.withColumn('prior_question_had_explanation', df['prior_question_had_explanation'].cast(IntegerType()))
