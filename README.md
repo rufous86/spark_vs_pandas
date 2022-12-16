@@ -15,35 +15,44 @@ https://www.kaggle.com/general/74235
 ![](https://github.com/rufous86/spark_vs_pandas/blob/main/assets/kaggle_token.png?raw=1)
 
 
-```pyton
+```python
 
-# ! pip install -q kaggle
-# from google.colab import drive
-# drive.mount('/content/drive')
-# ! mkdir ~/.kaggle
-# ! cp '/content/drive/MyDrive/Colab Notebooks/kaggle.json' ~/.kaggle/
-# ! chmod 600 ~/.kaggle/kaggle.json
-# ! kaggle competitions download -c 'riiid-test-answer-prediction'
-# ! mkdir data
-# ! unzip riiid-test-answer-prediction.zip -d data
-
-# ! pip install pyspark
-# ! pip install pyarrow
-
+! pip install -q kaggle
+from google.colab import drive
+drive.mount('/content/drive')
+! mkdir ~/.kaggle
+! cp '/content/drive/MyDrive/Colab Notebooks/kaggle.json' ~/.kaggle/
+! chmod 600 ~/.kaggle/kaggle.json
+! kaggle competitions download -c 'riiid-test-answer-prediction'
+! mkdir data
+! unzip riiid-test-answer-prediction.zip -d data
+```
+Установим pyspark и pyarrow. Pyarrow значительно ускоряет работу pyspark, что в нашем случае очень пригодится
+```puthon
+! pip install pyspark
+! pip install pyarrow
+```
+```python
 from pyspark.sql import SparkSession
+import os
+os.environ["PYARROW_IGNORE_TIMEZONE"] = "1" # без этой строчки у нас будет возникать постоянное предупреждение с просьбой установить эту переменную в значение 1, что мы заранее и делаем
+
 
 spark = SparkSession.builder.getOrCreate()
-spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
+spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true") # НАПИСАТЬ ПРО pyarrow
 spark
-
-import os
-os.environ["PYARROW_IGNORE_TIMEZONE"] = "1"
-
+```
+Давайте прочтем наш файл и глянем, какие колонки присутствуют в нашей таблице. Если мы уверены, что у нас в каждой колонке присутствует один конкретный тип данных, можно установить параметр inferSchema=True, spark самостоятельно определит типы для каждой колонки.
+```python
 df = spark.read.csv('data/train.csv', header=True, inferSchema=True)
 
 df.printSchema()
+```
 
+```python
 df.show()
+```
+
 
 from pyspark.sql.types import IntegerType
 
