@@ -43,6 +43,12 @@ drive.mount('/content/drive')
 ! mkdir data
 ! unzip riiid-test-answer-prediction.zip -d data
 ```
+---
+Написать про Pandas!!!
+
+
+
+---
 Установим pyspark и pyarrow. Pyarrow значительно ускоряет работу pyspark, что в нашем случае очень пригодится
 ```puthon
 ! pip install pyspark
