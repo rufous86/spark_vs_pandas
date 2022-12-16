@@ -1,3 +1,13 @@
+<table><tr><th>
+
+![spark.png](assets/spark.png)
+</th>
+<th>
+
+![pandas.png](assets/pandas.png)
+</th>
+</table>
+
 # Pyspark. Анализ больших данных, когда Pandas не достаточно
 
 Pandas - одна из наиболее используемых библиотек Python с открытым исходным кодом для работы со структурированными табличными данными для анализа. Библиотека Pandas активно используется для аналитики данных, машинного обучения, проектов в области науки о данных и многих других.
@@ -10,18 +20,24 @@ Pandas - одна из наиболее используемых библиот�
 https://www.kaggle.com/general/74235
 
 1. Заходим в раздел Account на kaggle.com
-2. Про
+2. Пролистываем вниз до подраздела API
+3. Жмем кнопку Create New API Token, скачиваем файл kaggle.json
+4. Далее этот файл можно сразу бросить в Files на Google Colab, но так как каждые 12 часов сессия Google Colab полностью обновляется, то я предпочитаю положить в директорию Colab Notebooks на Google Drive
 
-![kaggle_token.png](https://github.com/rufous86/spark_vs_pandas/blob/main/assets/kaggle_token.png?raw=1)
+<img src="assets/kaggle_token.png" height="75%" width="75%">
 
+Попробуем поиграться с датасетом [Riiid Answer Correctness Prediction](https://www.kaggle.com/c/riiid-test-answer-prediction)
 
+![riiid.png](assets/riiid.png)
+
+Код ниже скачивает датасет, все нужные файлы после этого лежат в папке data
 ```python
 
 ! pip install -q kaggle
 from google.colab import drive
 drive.mount('/content/drive')
 ! mkdir ~/.kaggle
-! cp '/content/drive/MyDrive/Colab Notebooks/kaggle.json' ~/.kaggle/
+! cp '/content/drive/MyDrive/Colab Notebooks/kaggle.json' ~/.kaggle/ # файл kaggle.json можно положить в любую папку в Drive, главное указать актуальный адрес в первом аргументе команды cp
 ! chmod 600 ~/.kaggle/kaggle.json
 ! kaggle competitions download -c 'riiid-test-answer-prediction'
 ! mkdir data
