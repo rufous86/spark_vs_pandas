@@ -42,7 +42,7 @@ spark = SparkSession.builder.getOrCreate()
 spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true") # НАПИСАТЬ ПРО pyarrow
 spark
 ```
-![spark_out](#)
+![spark_out.png](#)
 
 Давайте прочтем наш файл и глянем, какие колонки присутствуют в нашей таблице. Если мы уверены, что у нас в каждой колонке присутствует один конкретный тип данных, можно установить параметр inferSchema=True, spark самостоятельно определит типы для каждой колонки.
 
@@ -51,33 +51,33 @@ df = spark.read.csv('data/train.csv', header=True, inferSchema=True)
 
 df.printSchema()
 ```
-![printSchema_out1](#)
+![printSchema_out1.png](#)
 
 Для того, чтобы глянуть на данные, в pyspark есть метод show
 ```python
 df.show()
 ```
-![show_out1](#)
+![show_out1.png](#)
 ```python
 from pyspark.sql.types import IntegerType
 
 df = df.withColumn('prior_question_had_explanation', df['prior_question_had_explanation'].cast(IntegerType()))
 df.printSchema()
 ```
-![printSchema_out2](#)
+![printSchema_out2.png](#)
 
 Посмотрим, сколько в нашей таблице пустых значений
 ```python
 df.pandas_api().isna().mean() # выведем процентное соотношение
 ```
-![isna_out1](#)
+![isna_out1.png](#)
 
 Ввиду малого количества пропущенных значений, проще их удалить, что мы и сделаем
 ```python
 df = df.dropna()
 df.pandas_api().isna().sum()
 ```
-![isna_out2](#)
+![isna_out2.png](#)
 
 Проанализируем характеристики, влияющие на успеваемость студентов. Так как фактически данные об успеваемости у нас отсутствуют, условно за успеваемость будут выступать правильно данные ответы.      
 Сначала сохраним колонку answered_correctly в переменную target. Это будет наша целевая переменная  
@@ -113,3 +113,4 @@ sns.heatmap(corr_matrix_df,
             yticklabels=corr_matrix_df.columns.values,  cmap="Greens", annot=True)
 plt.show()
 ```
+![plt_show_corr.png](#)
