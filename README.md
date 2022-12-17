@@ -44,9 +44,15 @@ drive.mount('/content/drive')
 ! unzip riiid-test-answer-prediction.zip -d data
 ```
 ---
-Написать про Pandas!!!
+**Написать про Pandas!!!**
 
+Для начала попробуем проанализировать наш датасет с помощью библиотеки pandas.
 
+Устанавливаем необходимые библиотеки и сразу же читаем данные.
+```python
+import pandas as pd
+
+```
 
 ---
 Установим pyspark и pyarrow. Pyarrow значительно ускоряет работу pyspark, что в нашем случае очень пригодится
