@@ -30,7 +30,7 @@ https://www.kaggle.com/general/74235
 
 ![riiid.png](assets/riiid.png)
 
-Код ниже скачивает датасет, все нужные файлы после этого лежат в папке data
+Код ниже скачивает датасет, все нужные файлы после этого лежат в папке data.
 ```python
 
 ! pip install -q kaggle
@@ -43,12 +43,10 @@ drive.mount('/content/drive')
 ! mkdir data
 ! unzip riiid-test-answer-prediction.zip -d data
 ```
----
-**Написать про Pandas!!!**
+Датасет, скажем так, не огромный, и, возможно, ресурсов Вашей машины вполне хватит и совместно с pandas. Поэтому я буду показывать пример на бесплатной версии Google Colab. В бесплатном режиме нам предоставлено не более 12 ГБ оперативной памяти и для нашего учебного случая этого как раз достаточно.
 
 Для начала попробуем проанализировать наш датасет с помощью библиотеки pandas.
 
-Устанавливаем необходимые библиотеки и сразу же читаем данные.
 ```python
 import pandas as pd
 
@@ -60,7 +58,7 @@ df_train = pd.read_csv('data/train.csv',
                                'answered_correctly': 'int8',
                                'prior_question_elapsed_time': 'float32'})
 ```
-Глянем на наши данные
+Глянем на наши данные.
 ```python
 df_train.head()
 ```
@@ -73,7 +71,7 @@ df_train.info()
 
 Как видим, данные нашей таблицы занимают чуть больше 4 ГБ оперативной памяти, что составляет примерно треть памяти, выделенной colab для нас.
 
-Посмотрим, сколько в нашей таблице пустых значений
+Посмотрим, сколько в нашей таблице пустых значений.
 
 ```python
 df_train.isna().sum()
@@ -84,6 +82,17 @@ df_train.isna().sum()
 df_train[['prior_question_elapsed_time', 'prior_question_had_explanation']].isna().mean()
 ```
 ![pandas_isna2.png](assets/pandas_isna2.png)
+
+Имеем: в столбце prior_question_elapsed_time всего чуть более 2% пропусков, в prior_question_had_explanation и того меньше. Пробуем удалить их методом dropna библиотеки pandas и...
+
+```python
+df = df_train.dropna()
+```
+... получаем ошибку нехватки оперативной памяти.
+
+![pandas_mem_error.png](assets/pandas_mem_error.png)
+
+
 
 ---
 Установим pyspark и pyarrow. Pyarrow значительно ускоряет работу pyspark, что в нашем случае очень пригодится
