@@ -52,7 +52,38 @@ drive.mount('/content/drive')
 ```python
 import pandas as pd
 
+df_train = pd.read_csv('data/train.csv',
+                        dtype={'content_id': 'int16',
+                               'content_type_id': 'int8',
+                               'task_container_id': 'int16',
+                               'user_answer': 'int8',
+                               'answered_correctly': 'int8',
+                               'prior_question_elapsed_time': 'float32'})
 ```
+Глянем на наши данные
+```python
+df_train.head()
+```
+![pandas_head.png](assets/pandas_head.png)
+
+```python
+df_train.info()
+```
+![pandas_info.png](assets/pandas_info.png)
+
+Как видим, данные нашей таблицы занимают чуть больше 4 ГБ оперативной памяти, что составляет примерно треть памяти, выделенной colab для нас.
+
+Посмотрим, сколько в нашей таблице пустых значений
+
+```python
+df_train.isna().sum()
+```
+![pandas_isna1.png](assets/pandas_isna1.png)
+
+```python
+df_train[['prior_question_elapsed_time', 'prior_question_had_explanation']].isna().mean()
+```
+![pandas_isna2.png](assets/pandas_isna2.png)
 
 ---
 Установим pyspark и pyarrow. Pyarrow значительно ускоряет работу pyspark, что в нашем случае очень пригодится
