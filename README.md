@@ -130,6 +130,11 @@ df.printSchema()
 df.show()
 ```
 ![show_out1.png](assets/show_out1.png)
+
+---
+> **proceed!!!**
+---
+
 ```python
 from pyspark.sql.types import IntegerType
 
