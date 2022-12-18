@@ -114,7 +114,7 @@ spark = SparkSession.builder.getOrCreate()
 spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true") # НАПИСАТЬ ПРО pyarrow
 spark
 ```
-![spark_out.png](#)
+![spark_out.png](assets/spark_out.png)
 
 Давайте прочтем наш файл и глянем, какие колонки присутствуют в нашей таблице. Если мы уверены, что у нас в каждой колонке присутствует один конкретный тип данных, можно установить параметр inferSchema=True, spark самостоятельно определит типы для каждой колонки.
 
@@ -123,13 +123,13 @@ df = spark.read.csv('data/train.csv', header=True, inferSchema=True)
 
 df.printSchema()
 ```
-![printSchema_out1.png](#)
+![printSchema_out1.png](assets/printSchema_out1.png)
 
 Для того, чтобы глянуть на данные, в pyspark есть метод show
 ```python
 df.show()
 ```
-![show_out1.png](#)
+![show_out1.png](assets/show_out1.png)
 ```python
 from pyspark.sql.types import IntegerType
 
