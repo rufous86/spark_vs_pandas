@@ -153,7 +153,7 @@ df.pandas_api().isna().sum()
 
 ## 3. Матрица корреляции.
 
-Метод corr класса Correlation работает только с векторными столбцами. Поэтому прежде создания корреляционной матрицы необходимо применить преобразование с помощью [VectorAssembler](https://spark.apache.org/docs/3.1.3/api/python/reference/api/pyspark.ml.feature.VectorAssembler.html)
+Метод corr класса Correlation работает только с векторными столбцами. Поэтому прежде создания корреляционной матрицы необходимо применить преобразование датасета с помощью [VectorAssembler](https://spark.apache.org/docs/3.1.3/api/python/reference/api/pyspark.ml.feature.VectorAssembler.html)
 > Из [документации](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.stat.Correlation.html): column - имя столбца векторов, для которого необходимо вычислить коэффициент корреляции. Это должен быть столбец набора данных, и он должен содержать объекты Vector.
 
 ```python
@@ -161,14 +161,14 @@ from pyspark.ml.stat import Correlation
 from pyspark.ml.feature import VectorAssembler
 import pandas as pd
 
-# convert to vector column first
+# сначала преобразуем данные в объект типа Vector
 vector_col = "corr_features"
 assembler = VectorAssembler(inputCols=df.columns, outputCol=vector_col)
 df_vector = assembler.transform(df).select(vector_col)
 
-# get correlation matrix
+# получаем матрицу корреляции и тут же преобразуем данные в numpy вектор
 matrix = Correlation.corr(df_vector, vector_col).collect()[0][matrix.columns[0]].toArray() # запаситесь попкорном, данное действие, к сожалению не быстрое
-corr_matrix_df = pd.DataFrame(data=matrix, columns = df.columns, index=df.columns)
+corr_matrix_df = pd.DataFrame(data=matrix, columns = df.columns, index=df.columns) # последний штрих - оборачиваем полученную корреляционную матрицу в pandas DataFrame
 ```
 
 Выведем корреляционную матрицу на экран
