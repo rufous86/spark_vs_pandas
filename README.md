@@ -40,7 +40,7 @@ drive.mount('/content/drive')
 ! mkdir data
 ! unzip riiid-test-answer-prediction.zip -d data
 ```
-Датасет, скажем так, не огромный, и, возможно, ресурсов Вашей машины вполне хватит и совместно с pandas. Поэтому я буду показывать пример на бесплатной версии Google Colab. В бесплатном режиме нам предоставлено не более 12 ГБ оперативной памяти и для нашего учебного случая этого как раз достаточно.
+Датасет, скажем так, не огромный, и, возможно, ресурсов вашей машины вполне хватит и для работы с pandas. Поэтому я буду показывать пример на бесплатной версии Google Colab. В бесплатном режиме нам предоставлено не более 12 ГБ оперативной памяти и для нашего учебного случая этого как раз то, что нужно.
 
 Для начала попробуем проанализировать наш датасет с помощью библиотеки pandas.
 
@@ -91,7 +91,7 @@ df = df_train.dropna()
 
 ![pandas_mem_error.png](assets/pandas_mem_error.png)
 
- > Примечание. На самом деле, получить данную ошибок мы могли в самом начале, при чтении датасете. Для этого достаточно было бы применить метод read_csv с аргументами по-умолчанию. Тогда pandas присвоил бы каждому столбцу с числовыми данными либо тип int64, либо тип float64. А памяти они занимают немало
+ > Примечание. На самом деле, получить данную ошибок мы могли в самом начале, при чтении датасете. Для этого достаточно было бы применить метод read_csv с аргументами по-умолчанию. Тогда pandas присвоил бы каждому столбцу с числовыми данными либо тип int64, либо тип float64. А памяти они занимают немало...
 
 Там, где не справился pandas, прибегнем к помощи spark.
 
@@ -108,7 +108,7 @@ os.environ["PYARROW_IGNORE_TIMEZONE"] = "1" # без этой строчки у 
 
 
 spark = SparkSession.builder.getOrCreate()
-spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true") # НАПИСАТЬ ПРО pyarrow
+spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
 spark
 ```
 ![spark_out.png](assets/spark_out.png)
@@ -128,7 +128,7 @@ df.show()
 ```
 ![show_out1.png](assets/show_out1.png)
 
-Прежде, чем заниматься пропускам, необходимо привести данные двух последних столбцов к целочисленному типу 
+Прежде, чем заниматься пропускам, необходимо привести данные столбца prior_question_had_explanation к целочисленному типу 
 
 ```python
 from pyspark.sql.types import IntegerType
@@ -138,20 +138,23 @@ df.printSchema()
 ```
 ![printSchema_out2.png](assets/printSchema_out2.png)
 
-Посмотрим, сколько в нашей таблице пустых значений
+Посмотрим, сколько в нашей таблице пустых значений. Метод pandas_api преобразует существующий DataFrame в pandas-on-Spark DataFrame (это доступно только в том случае, если pandas установлен и доступен).
 ```python
 df.pandas_api().isna().mean() # выведем процентное соотношение
 ```
 ![isna_out1.png](assets/isna_out1.png)
 
-Ввиду малого количества пропущенных значений, проще их удалить, что мы и сделаем
+В этот раз удалить пропущенные данные удастся без проблем.
 ```python
 df = df.dropna()
 df.pandas_api().isna().sum()
 ```
 ![isna_out2.png](assets/isna_out2.png)
 
-> !!! Написать что-нибудь про матрицу корреляции !!!
+## 3. Матрица корреляции.
+
+Метод corr класса Correlation работает только с векторными столбцами. Поэтому прежде создания корреляционной матрицы необходимо применить преобразование с помощью [VectorAssembler](https://spark.apache.org/docs/3.1.3/api/python/reference/api/pyspark.ml.feature.VectorAssembler.html)
+> Из [документации](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.stat.Correlation.html): column - имя столбца векторов, для которого необходимо вычислить коэффициент корреляции. Это должен быть столбец набора данных, и он должен содержать объекты Vector.
 
 ```python
 from pyspark.ml.stat import Correlation
@@ -164,7 +167,7 @@ assembler = VectorAssembler(inputCols=df.columns, outputCol=vector_col)
 df_vector = assembler.transform(df).select(vector_col)
 
 # get correlation matrix
-matrix = Correlation.corr(df_vector, vector_col).collect()[0][matrix.columns[0]].toArray()
+matrix = Correlation.corr(df_vector, vector_col).collect()[0][matrix.columns[0]].toArray() # запаситесь попкорном, данное действие, к сожалению не быстрое
 corr_matrix_df = pd.DataFrame(data=matrix, columns = df.columns, index=df.columns)
 ```
 
@@ -181,3 +184,5 @@ sns.heatmap(corr_matrix_df,
 plt.show()
 ```
 ![plt_show_corr.png](assets/plt_show_corr.png)
+
+Как видите, pyspark позволил справиться с объемом данных, для которого всеми любимого pandas оказалось уже недостаточно. Причем синтаксис pyspark местами очень схож с pandas. А там, где методов чистого pyspark не хватает, на помощь приходит метод pandas_api
