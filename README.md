@@ -131,9 +131,7 @@ df.show()
 ```
 ![show_out1.png](assets/show_out1.png)
 
----
-> **proceed!!!**
----
+Прежде, чем заниматься пропускам, необходимо привести данные двух последних столбцов к целочисленному типу 
 
 ```python
 from pyspark.sql.types import IntegerType
