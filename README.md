@@ -185,4 +185,4 @@ sns.heatmap(corr_matrix_df,
             yticklabels=corr_matrix_df.columns.values,  cmap="Greens", annot=True)
 plt.show()
 ```
-![plt_show_corr.png](#)
+![plt_show_corr.png](assets/plt_show_corr.png)
