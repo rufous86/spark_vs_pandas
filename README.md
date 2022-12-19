@@ -141,24 +141,22 @@ from pyspark.sql.types import IntegerType
 df = df.withColumn('prior_question_had_explanation', df['prior_question_had_explanation'].cast(IntegerType()))
 df.printSchema()
 ```
-![printSchema_out2.png](#)
+![printSchema_out2.png](assets/printSchema_out2.png)
 
 Посмотрим, сколько в нашей таблице пустых значений
 ```python
 df.pandas_api().isna().mean() # выведем процентное соотношение
 ```
-![isna_out1.png](#)
+![isna_out1.png](assets/isna_out1.png)
 
 Ввиду малого количества пропущенных значений, проще их удалить, что мы и сделаем
 ```python
 df = df.dropna()
 df.pandas_api().isna().sum()
 ```
-![isna_out2.png](#)
+![isna_out2.png](assets/isna_out2.png)
 
-Проанализируем характеристики, влияющие на успеваемость студентов. Так как фактически данные об успеваемости у нас отсутствуют, условно за успеваемость будут выступать правильно данные ответы.      
-Сначала сохраним колонку answered_correctly в переменную target. Это будет наша целевая переменная  
-Затем рассчитаем коэффициент корреляции целевой переменной с каждой из остальных характеристик
+> !!! Написать что-нибудь про матрицу корреляции !!!
 
 ```python
 from pyspark.ml.stat import Correlation
@@ -171,11 +169,8 @@ assembler = VectorAssembler(inputCols=df.columns, outputCol=vector_col)
 df_vector = assembler.transform(df).select(vector_col)
 
 # get correlation matrix
-matrix = Correlation.corr(df_vector, vector_col)
-
-cor_np = matrix.collect()[0][matrix.columns[0]].toArray()
-
-corr_matrix_df = pd.DataFrame(data=cor_np, columns = df.columns, index=df.columns)
+matrix = Correlation.corr(df_vector, vector_col).collect()[0][matrix.columns[0]].toArray()
+corr_matrix_df = pd.DataFrame(data=matrix, columns = df.columns, index=df.columns)
 ```
 
 Выведем корреляционную матрицу на экран
